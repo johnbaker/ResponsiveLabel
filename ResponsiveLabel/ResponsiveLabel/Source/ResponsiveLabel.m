@@ -162,10 +162,10 @@ NSString *RLHighlightedBackgroundColorAttributeName = @"HighlightedBackgroundCol
   // Don't call super implementation. Might want to uncomment this out when
   // debugging layout and rendering problems.
   //   [super drawTextInRect:rect];
-
+  
   //Handle truncation
     self.customTruncationEnabled ? [self appendTokenIfNeeded] : [self removeTokenIfPresent];
-  
+
   //Draw after truncation process is complete
   NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
   
@@ -203,8 +203,9 @@ NSString *RLHighlightedBackgroundColorAttributeName = @"HighlightedBackgroundCol
 - (void)redrawTextForRange:(NSRange)range {
   NSRange glyphRange = NSMakeRange(NSNotFound, 0);
   [self.layoutManager characterRangeForGlyphRange:range actualGlyphRange:&glyphRange];
-  CGRect rect = [self.layoutManager boundingRectForGlyphRange:glyphRange
-                                              inTextContainer:self.textContainer];
+//  CGRect rect = [self.layoutManager boundingRectForGlyphRange:glyphRange
+//                                              inTextContainer:self.textContainer];
+  CGRect rect = [self.layoutManager usedRectForTextContainer:self.textContainer];
   NSRange totalGlyphRange = [self.layoutManager
                              glyphRangeForTextContainer:self.textContainer];
   CGPoint point = [self textOffsetForGlyphRange:totalGlyphRange];
@@ -219,7 +220,7 @@ NSString *RLHighlightedBackgroundColorAttributeName = @"HighlightedBackgroundCol
   CGRect requiredRect = [self rectFittingTextForContainerSize:bounds.size
                                               forNumberOfLine:numberOfLines];
   self.textContainer.size = requiredRect.size;
-  return requiredRect;
+  return CGRectMake(requiredRect.origin.x, requiredRect.origin.y, requiredRect.size.width, requiredRect.size.height);
 }
 
 - (CGRect)rectFittingTextForContainerSize:(CGSize)size
@@ -227,9 +228,9 @@ NSString *RLHighlightedBackgroundColorAttributeName = @"HighlightedBackgroundCol
   self.textContainer.size = size;
   self.textContainer.maximumNumberOfLines = numberOfLines;
   
-  NSRange glyphRange = [self.layoutManager
-                        glyphRangeForTextContainer:self.textContainer];
-  CGRect textBounds = [self.layoutManager boundingRectForGlyphRange:glyphRange
+//  NSRange glyphRange = [self.layoutManager
+//                        glyphRangeForTextContainer:self.textContainer];
+  CGRect textBounds = [self.layoutManager boundingRectForGlyphRange:NSMakeRange(0, self.layoutManager.numberOfGlyphs)
                                                     inTextContainer:self.textContainer];
   NSInteger totalLines = textBounds.size.height / self.font.lineHeight;
   
@@ -237,6 +238,7 @@ NSString *RLHighlightedBackgroundColorAttributeName = @"HighlightedBackgroundCol
     textBounds.size.height -= (totalLines - numberOfLines) * self.font.lineHeight;
   }else if (numberOfLines > 0 && (numberOfLines > totalLines)) {
     textBounds.size.height += (numberOfLines - totalLines) * self.font.lineHeight;
+  }else {
   }
   textBounds.size.width = ceilf(textBounds.size.width);
   textBounds.size.height = ceilf(textBounds.size.height);
