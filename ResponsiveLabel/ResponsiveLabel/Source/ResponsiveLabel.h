@@ -9,6 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "PatternDescriptor.h"
 
+typedef NS_ENUM(NSInteger, RLTextVerticalAlignment) {
+    RLTextVerticalAlignmentCenter      = 0,    // Visually aligned in the middle
+    RLTextVerticalAlignmentTop    = 1,         // Visually aligned at the top
+    RLTextVerticalAlignmentBottom    = 2    // Visually aligned at the bottom
+};
+
+
 /**
  Custom NSTextAttributeName which takes value of type PatternTapHandler.
  It specifies the action to be performed when a range of text with that attribute is tapped.
@@ -30,6 +37,8 @@ IB_DESIGNABLE
  */
 
 @interface ResponsiveLabel : UILabel
+
+@property (nonatomic,assign) IBInspectable RLTextVerticalAlignment verticalAlignment;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
 

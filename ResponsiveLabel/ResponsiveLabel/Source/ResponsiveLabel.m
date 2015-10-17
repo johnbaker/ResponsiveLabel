@@ -189,12 +189,23 @@ NSString *RLHighlightedBackgroundColorAttributeName = @"HighlightedBackgroundCol
  */
 - (CGPoint)textOffsetForGlyphRange:(NSRange)glyphRange {
   CGPoint textOffset = CGPointZero;
-  
-  CGRect textBounds = [self.layoutManager boundingRectForGlyphRange:glyphRange
-                                                    inTextContainer:self.textContainer];
-  CGFloat paddingHeight = (self.bounds.size.height - textBounds.size.height) / 2.0f;
-  if (paddingHeight > 0)
-    textOffset.y = paddingHeight;
+    
+    if(self.verticalAlignment == RLTextVerticalAlignmentTop) {
+        return textOffset;
+    } else {
+        CGRect textBounds = [self.layoutManager boundingRectForGlyphRange:glyphRange
+                                                          inTextContainer:self.textContainer];
+
+        if(self.verticalAlignment == RLTextVerticalAlignmentCenter) {
+            CGFloat paddingHeight = (self.bounds.size.height - textBounds.size.height) / 2.0f;
+            if (paddingHeight > 0)
+                textOffset.y = paddingHeight;
+        } else if(self.verticalAlignment == RLTextVerticalAlignmentBottom) {
+            CGFloat paddingHeight = self.bounds.size.height - textBounds.size.height;
+            if (paddingHeight > 0)
+                textOffset.y = paddingHeight;
+        }
+    }
   
   return textOffset;
 }
